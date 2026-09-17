@@ -5,7 +5,7 @@ import { revalidatePath } from "next/cache"
 import { liveblocks } from "../liveblocks"
 import { parseStringify } from "../utils"
 
-export const creaateDocument = async ({
+export const createDocument = async ({
   userId,
   email,
 }: CreateDocumentParams) => {

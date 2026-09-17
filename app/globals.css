@@ -258,9 +258,6 @@
   }
 
   /* ======================== Home Page */
-  .home-container {
-    @apply relative flex min-h-screen w-full flex-col items-center gap-5 sm:gap-10;
-  }
 
   .document-ul {
     @apply flex w-full max-w-[730px] flex-col gap-5;
