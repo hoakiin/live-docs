@@ -214,9 +214,9 @@
     @apply min-w-[78px] border-none bg-transparent px-0 text-left text-base font-semibold leading-[24px] focus-visible:ring-0 focus-visible:ring-offset-0 disabled:text-black sm:text-xl md:text-center;
   }
 
-  .document-title {
+  /* .document-title {
     @apply line-clamp-1 border-dark-400 text-base font-semibold leading-[24px] sm:pl-0 sm:text-xl;
-  }
+  } */
 
   .view-only-tag {
     @apply rounded-md bg-dark-400/50 px-2 py-0.5 text-xs text-blue-100/50;
