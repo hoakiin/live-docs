@@ -13,7 +13,7 @@ const Document = () => {
         </div>
         <Show when="signed-out">
           <SignInButton>
-            <button className="h-10 cursor-pointer rounded-full bg-blue-500 px-4 text-sm font-medium text-white transition-colors hover:bg-blue-400 sm:h-12 sm:px-5 sm:text-base">
+            <button className="h-10 cursor-pointer rounded-full bg-transparent px-4 text-sm font-medium text-white transition-colors hover:bg-white/10 sm:h-12 sm:px-5 sm:text-base">
               Sign In
             </button>
           </SignInButton>
