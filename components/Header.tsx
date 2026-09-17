@@ -8,7 +8,7 @@ const Header = ({ children }: HeaderProps) => {
         <Image
           src="/assets/icons/logo.svg"
           alt="Logo with name"
-          width={120}
+          width={114}
           height={32}
           className="hidden md:block"
         />
