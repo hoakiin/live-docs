@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 declare type SearchParamProps = {
-  params: { [key: string]: string }
-  searchParams: { [key: string]: string | string[] | undefined }
+  params: Promise<{ [key: string]: string }>
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>
 }
 
 declare type AccessType = ["room:write"] | ["room:read", "room:presence:write"]
@@ -66,8 +66,8 @@ declare type CollaboratorProps = {
 declare type CollaborativeRoomProps = {
   roomId: string
   roomMetadata: RoomMetadata
-  users: User[]
-  currentUserType: UserType
+  users?: User[]
+  currentUserType?: UserType
 }
 
 declare type AddDocumentBtnProps = {
