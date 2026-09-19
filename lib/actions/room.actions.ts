@@ -1,4 +1,4 @@
-'use server'
+"use server"
 
 import { nanoid } from "@liveblocks/client"
 import { revalidatePath } from "next/cache"
@@ -36,20 +36,42 @@ export const createDocument = async ({
   }
 }
 
-export const getDocument = async ({ roomId, userId }: { roomId: string; userId: string }) => {
+export const getDocument = async ({
+  roomId,
+  userId,
+}: {
+  roomId: string
+  userId: string
+}) => {
   try {
-      const room = await liveblocks.getRoom(roomId);
+    const room = await liveblocks.getRoom(roomId)
 
-      //TODO: bring this back
-    
-      // const hasAccess = Object.keys(room.usersAccesses).includes(userId);
-    
-      // if(!hasAccess) {
-      //   throw new Error('You do not have access to this document');
-      // }
-    
-      return parseStringify(room);
+    //TODO: bring this back
+
+    // const hasAccess = Object.keys(room.usersAccesses).includes(userId);
+
+    // if(!hasAccess) {
+    //   throw new Error('You do not have access to this document');
+    // }
+
+    return parseStringify(room)
   } catch (error) {
-    console.log(`Error happened while getting a room: ${error}`);
+    console.log(`Error happened while getting a room: ${error}`)
+  }
+}
+
+export const updateDocument = async (roomId: string, title: string) => {
+  try {
+    const updatedRoom = await liveblocks.updateRoom(roomId, {
+      metadata: {
+        title,
+      },
+    })
+
+    revalidatePath(`/documents/${roomId}`)
+
+    return parseStringify(updatedRoom)
+  } catch (error) {
+    console.log(`Error happened while updating a room: ${error}`)
   }
 }
