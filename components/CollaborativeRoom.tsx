@@ -8,6 +8,7 @@ import ActiveCollaborators from "./ActiveCollaborators"
 import { useEffect, useRef, useState } from "react"
 import Image from "next/image"
 import { updateDocument } from "@/lib/actions/room.actions"
+import Loader from "./Loader"
 
 const CollaborativeRoom = ({
   roomId,
@@ -72,7 +73,7 @@ const CollaborativeRoom = ({
 
   return (
     <RoomProvider id={roomId}>
-      <ClientSideSuspense fallback={<div>Loading…</div>}>
+      <ClientSideSuspense fallback={<Loader />}>
         <div className="collaborative-room">
           <Header>
             <div
@@ -89,7 +90,7 @@ const CollaborativeRoom = ({
                   onKeyDown={updateTitleHandler}
                   disabled={!editing}
                   size={Math.max(documentTitle.length + 2, 12)}
-                  className="m-0 box-border grow-0 shrink-0 rounded-none border-0 bg-transparent p-0 text-center text-base leading-[24px] font-semibold outline-none placeholder:text-muted-foreground focus:outline-none disabled:text-black sm:text-xl md:text-xl"
+                  className="m-0 box-border shrink-0 grow-0 rounded-none border-0 bg-transparent p-0 text-center text-base leading-[24px] font-semibold outline-none placeholder:text-muted-foreground focus:outline-none disabled:text-black sm:text-xl md:text-xl"
                 />
               ) : (
                 <>
@@ -106,7 +107,9 @@ const CollaborativeRoom = ({
                   width={24}
                   height={24}
                   onClick={() => setEditing(true)}
-                  className={editing ? "pointer-events-none invisible" : "pointer"}
+                  className={
+                    editing ? "pointer-events-none invisible" : "pointer"
+                  }
                 />
               )}
 
