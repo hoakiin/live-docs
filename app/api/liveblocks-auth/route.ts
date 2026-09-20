@@ -1,14 +1,17 @@
 import { liveblocks } from "@/lib/liveblocks"
 import { getUserColor } from "@/lib/utils"
-import { currentUser } from "@clerk/nextjs/server"
+import { auth, clerkClient } from "@clerk/nextjs/server"
 
 export async function POST(request: Request) {
-  const clerkUser = await currentUser()
+  const { userId } = await auth()
 
-  if (!clerkUser) {
+  if (!userId) {
     return Response.json({ error: "Unauthorized" }, { status: 401 })
   }
-  const { id, firstName, lastName, emailAddresses, imageUrl } = clerkUser
+
+  const client = await clerkClient()
+  const { id, firstName, lastName, emailAddresses, imageUrl } =
+    await client.users.getUser(userId)
   // Get the current user from your database
   const user = {
     id,
