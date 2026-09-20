@@ -232,18 +232,6 @@
     @apply rounded-lg bg-transparent px-0 text-red-500 hover:bg-transparent;
   }
 
-  .comments-container {
-    @apply mb-10 space-y-4 lg:w-fit flex w-full flex-col items-center justify-center;
-  }
-
-  .comment-composer {
-    @apply w-full max-w-[800px] border border-dark-300 bg-dark-200 shadow-sm lg:w-[350px];
-  }
-
-  .comment-thread {
-    @apply w-full max-w-[800px] border border-dark-300 bg-dark-200 shadow-sm lg:w-[350px] transition-all;
-  }
-
   .loader {
     @apply flex size-full h-screen items-center justify-center gap-3 text-white;
   }
