@@ -2,11 +2,14 @@
 
 import { AutoFocusPlugin } from "@lexical/react/LexicalAutoFocusPlugin"
 import { LexicalComposer } from "@lexical/react/LexicalComposer"
+import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext"
 import { ContentEditable } from "@lexical/react/LexicalContentEditable"
 import { LexicalErrorBoundary } from "@lexical/react/LexicalErrorBoundary"
 import { HistoryPlugin } from "@lexical/react/LexicalHistoryPlugin"
 import { RichTextPlugin } from "@lexical/react/LexicalRichTextPlugin"
 import { HeadingNode } from "@lexical/rich-text"
+import { $getSelection, $setSelection } from "lexical"
+import { useEffect, useState } from "react"
 import Theme from "./plugins/Theme"
 import ToolbarPlugin from "./plugins/ToolbarPlugin"
 import {
@@ -29,6 +32,45 @@ function Placeholder() {
   return <div className="editor-placeholder">Enter some rich text...</div>
 }
 
+const FloatingThreadsBehavior = ({
+  onInteracted,
+}: {
+  onInteracted: () => void
+}) => {
+  const [editor] = useLexicalComposerContext()
+
+  useEffect(() => {
+    const handleMouseDown = (event: MouseEvent) => {
+      const target = event.target as HTMLElement
+      const isInsideEditor = !!target.closest(".editor-container")
+      const isInsideLiveblocksUI = !!target.closest(
+        ".lb-root, .lb-portal, .floating-toolbar"
+      )
+
+      if (isInsideEditor) {
+        onInteracted()
+        return
+      }
+
+      if (!isInsideLiveblocksUI) {
+        editor.update(() => {
+          if ($getSelection() !== null) {
+            $setSelection(null)
+          }
+        })
+      }
+    }
+
+    document.addEventListener("mousedown", handleMouseDown, true)
+
+    return () => {
+      document.removeEventListener("mousedown", handleMouseDown, true)
+    }
+  }, [editor, onInteracted])
+
+  return null
+}
+
 export function Editor({
   roomId,
   currentUserType,
@@ -38,6 +80,7 @@ export function Editor({
 }) {
   const isEditorReady = useIsEditorReady()
   const { threads } = useThreads()
+  const [hasInteracted, setHasInteracted] = useState(false)
 
   const initialConfig = liveblocksConfig({
     namespace: "Editor",
@@ -52,6 +95,7 @@ export function Editor({
 
   return (
     <LexicalComposer initialConfig={initialConfig}>
+      <FloatingThreadsBehavior onInteracted={() => setHasInteracted(true)} />
       <div className="editor-container size-full">
         <div className="toolbar-wrapper flex min-w-full justify-between">
           <ToolbarPlugin />
@@ -78,7 +122,7 @@ export function Editor({
 
           <LiveblocksPlugin>
             <FloatingComposer className="w-[350px]" />
-            <FloatingThreads threads={threads} />
+            {hasInteracted && <FloatingThreads threads={threads} />}
             <Comments/>
           </LiveblocksPlugin>
         </div>
