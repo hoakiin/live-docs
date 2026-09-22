@@ -8,7 +8,7 @@ Sentry.init({
   dsn: "https://ee1a1dc3f92a10ce5e97d62e40f87259@o4511711935266816.ingest.de.sentry.io/4512119592714320",
 
   // Add optional integrations for additional features
-  integrations: [Sentry.replayIntegration()],
+  integrations: [],
 
   // Define how likely traces are sampled. Adjust this value in production, or use tracesSampler for greater control.
   tracesSampleRate: 1,
@@ -29,4 +29,4 @@ Sentry.init({
   },
 })
 
-export const onRouterTransitionStart = Sentry.captureRouterTransitionStart
+// export const onRouterTransitionStart = Sentry.captureRouterTransitionStart
