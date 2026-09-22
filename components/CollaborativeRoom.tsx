@@ -9,6 +9,7 @@ import { useEffect, useRef, useState } from "react"
 import Image from "next/image"
 import { updateDocument } from "@/lib/actions/room.actions"
 import Loader from "./Loader"
+import ShareModal from "./ShareModal"
 
 const CollaborativeRoom = ({
   roomId,
@@ -121,6 +122,14 @@ const CollaborativeRoom = ({
             </div>
             <div className="flex w-full flex-1 justify-end gap-2 sm:gap-3">
               <ActiveCollaborators />
+
+              <ShareModal
+                roomId={roomId}
+                collaborators={users}
+                creatorId={roomMetadata.creatorId}
+                currentUserType={currentUserType}
+              />
+
               <Show when="signed-out">
                 <SignInButton>
                   <button className="h-10 cursor-pointer rounded-full bg-transparent px-4 text-sm font-medium text-white transition-colors hover:bg-white/10 sm:h-12 sm:px-5 sm:text-base">
