@@ -1,10 +1,11 @@
 "use server"
 
+import { cache } from "react"
 import { clerkClient } from "@clerk/nextjs/server"
 import { parseStringify } from "../utils"
 import { liveblocks } from "../liveblocks"
 
-export const getClerkUsers = async ({ userIds }: { userIds: string[] }) => {
+export const getClerkUsers = cache(async ({ userIds }: { userIds: string[] }) => {
   try {
     const client = await clerkClient()
     const { data } = await client.users.getUserList({
@@ -26,7 +27,7 @@ export const getClerkUsers = async ({ userIds }: { userIds: string[] }) => {
   } catch (error) {
     console.log(`Error fetching  user: ${error}`)
   }
-}
+})
 
 export const getDocumentUsers = async ({
   roomId,
