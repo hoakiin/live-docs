@@ -103,7 +103,7 @@ export function Editor({
           {currentUserType === "editor" && <DeleteModal roomId={roomId} />}
         </div>
 
-        <div className="flex custom-scrollbar h-[calc(100vh-140px)] flex-col items-center justify-center gap-5 overflow-auto px-5 pt-5 lg:flex-row lg:items-start lg:justify-center xl:gap-10 xl:pt-10">
+        <div className="flex custom-scrollbar h-[calc(100vh-140px)] flex-col items-center justify-start gap-5 overflow-auto px-5 pt-5 lg:flex-row lg:items-start lg:justify-center xl:gap-10 xl:pt-10">
           {!isEditorReady ? (
             <Loader />
           ) : (
