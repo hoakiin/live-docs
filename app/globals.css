@@ -268,6 +268,8 @@
   --lb-accent-subtle: #0b1527;
   --lb-radius: 0px;
   --lb-dynamic-background: #1b2840;
+  --lb-foreground: #fff;
+  --lb-background: #0b1527;
 }
 
 .lb-comment,
@@ -314,6 +316,18 @@
 
 .lb-inbox-notification-list-item:where(:not(:last-of-type)) {
   border-bottom: none;
+}
+
+.lb-inbox-notification {
+  background-color: #0b1527;
+}
+
+.lb-inbox-notification:where([data-unread]) {
+  background-color: #1b2840;
+}
+
+.lb-inbox-notification:where([href]):where(:hover, :focus-visible, :focus-within) {
+  background-color: #223052;
 }
 
 .lb-comment-body,
