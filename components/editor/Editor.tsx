@@ -23,6 +23,7 @@ import Loader from "../Loader"
 import FloatingToolbarPlugin from "./plugins/FloatingToolbarPlugin"
 import { useThreads } from "@liveblocks/react/suspense"
 import Comments from "../Comments"
+import { DeleteModal } from "../DeleteModal"
 
 // Catch any errors that occur during Lexical updates and log them
 // or throw them as needed. If you don't throw them, Lexical will
@@ -97,9 +98,9 @@ export function Editor({
     <LexicalComposer initialConfig={initialConfig}>
       <FloatingThreadsBehavior onInteracted={() => setHasInteracted(true)} />
       <div className="editor-container size-full">
-        <div className="toolbar-wrapper flex min-w-full justify-between">
+        <div className="toolbar-wrapper flex min-w-full items-center justify-between">
           <ToolbarPlugin />
-          {/* {currentUserType === 'editor' && <DeleteModal roomId={roomId} />} */}
+          {currentUserType === "editor" && <DeleteModal roomId={roomId} />}
         </div>
 
         <div className="flex custom-scrollbar h-[calc(100vh-140px)] flex-col items-center justify-center gap-5 overflow-auto px-5 pt-5 lg:flex-row lg:items-start lg:justify-center xl:gap-10 xl:pt-10">
@@ -123,7 +124,7 @@ export function Editor({
           <LiveblocksPlugin>
             <FloatingComposer className="w-[350px]" />
             {hasInteracted && <FloatingThreads threads={threads} />}
-            <Comments/>
+            <Comments />
           </LiveblocksPlugin>
         </div>
       </div>
