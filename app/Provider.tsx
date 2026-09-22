@@ -21,9 +21,11 @@ const Provider = ({ children }: { children: ReactNode }) => {
         return users
       }}
       resolveMentionSuggestions={async ({ text, roomId }) => {
+        const currentUser = clerkUser?.emailAddresses[0]?.emailAddress ?? ""
+
         const roomUsers = await getDocumentUsers({
           roomId,
-          currentUser: clerkUser?.emailAddresses[0].emailAddress!,
+          currentUser,
           text,
         })
 

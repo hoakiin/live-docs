@@ -2,7 +2,7 @@ import { liveblocks } from "@/lib/liveblocks"
 import { getUserColor } from "@/lib/utils"
 import { auth, clerkClient } from "@clerk/nextjs/server"
 
-export async function POST(request: Request) {
+export async function POST() {
   const { userId } = await auth()
 
   if (!userId) {

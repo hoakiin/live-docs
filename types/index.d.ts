@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 declare type SearchParamProps = {
   params: Promise<{ [key: string]: string }>
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>
@@ -7,6 +6,12 @@ declare type SearchParamProps = {
 declare type AccessType = ["room:write"] | ["room:read", "room:presence:write"]
 
 declare type RoomAccesses = Record<string, AccessType>
+
+declare type RoomListItem = {
+  id: string
+  metadata: RoomMetadata
+  createdAt: string
+}
 
 declare type UserType = "creator" | "editor" | "viewer"
 

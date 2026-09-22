@@ -8,7 +8,7 @@ Sentry.init({
   dsn: "https://ee1a1dc3f92a10ce5e97d62e40f87259@o4511711935266816.ingest.de.sentry.io/4512119592714320",
 
   // Define how likely traces are sampled. Adjust this value in production, or use tracesSampler for greater control.
-  tracesSampleRate: 1,
+  tracesSampleRate: 0.25,
 
   dataCollection: {
     // To disable sending user data and HTTP bodies, uncomment the lines below. For more info visit:
