@@ -127,7 +127,6 @@ const CollaborativeRoom = ({
                 roomId={roomId}
                 collaborators={users}
                 creatorId={roomMetadata.creatorId}
-                currentUserType={currentUserType}
               />
 
               <Show when="signed-out">

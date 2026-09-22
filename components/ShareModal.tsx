@@ -22,7 +22,6 @@ const ShareModal = ({
   roomId,
   collaborators,
   creatorId,
-  currentUserType,
 }: ShareDocumentDialogProps) => {
   const user = useSelf()
 
@@ -51,7 +50,7 @@ const ShareModal = ({
         render={
           <Button
             className="gradient-blue flex h-9 gap-1 px-4"
-            disabled={currentUserType !== "editor"}
+            disabled={user.info.id !== creatorId}
           />
         }
       >

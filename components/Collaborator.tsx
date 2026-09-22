@@ -63,6 +63,8 @@ const Collaborator = ({
 
       {creatorId === collaborator.id ? (
         <p className="text-sm text-blue-100">Owner</p>
+      ) : user.email === collaborator.email ? (
+        <p className="text-sm text-blue-100">You</p>
       ) : (
         <div className="flex items-center">
           <UserTypeSelector

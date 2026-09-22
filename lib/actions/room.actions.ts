@@ -2,6 +2,7 @@
 
 import { nanoid } from "@liveblocks/client"
 import { revalidatePath } from "next/cache"
+import { currentUser } from "@clerk/nextjs/server"
 import { liveblocks } from "../liveblocks"
 import { getAccessType, parseStringify } from "../utils"
 import { redirect } from "next/navigation"
@@ -92,6 +93,17 @@ export const updateDocumentAccess = async ({
   updatedBy,
 }: ShareDocumentParams) => {
   try {
+    const clerkUser = await currentUser()
+    if (!clerkUser) {
+      throw new Error("Unauthorized")
+    }
+
+    const currentRoom = await liveblocks.getRoom(roomId)
+
+    if (currentRoom.metadata.email !== clerkUser.emailAddresses[0].emailAddress) {
+      throw new Error("Only the document owner can manage access")
+    }
+
     const usersAccesses: RoomAccesses = {
       [email]: getAccessType(userType) as AccessType,
     }
@@ -133,7 +145,16 @@ export const removeCollaborator = async ({
   email: string
 }) => {
   try {
+    const clerkUser = await currentUser()
+    if (!clerkUser) {
+      throw new Error("Unauthorized")
+    }
+
     const room = await liveblocks.getRoom(roomId)
+
+    if (room.metadata.email !== clerkUser.emailAddresses[0].emailAddress) {
+      throw new Error("Only the document owner can remove collaborators")
+    }
 
     if (room.metadata.email === email) {
       throw new Error("You cannot remove yourself from the document")
