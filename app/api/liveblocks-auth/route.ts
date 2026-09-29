@@ -1,5 +1,5 @@
 import { liveblocks } from "@/lib/liveblocks"
-import { getUserColor } from "@/lib/utils"
+import { getUserColor, getUserName } from "@/lib/utils"
 import { auth, clerkClient } from "@clerk/nextjs/server"
 
 export async function POST() {
@@ -17,7 +17,7 @@ export async function POST() {
     id,
     info: {
       id,
-      name: `${firstName} ${lastName}`,
+      name: getUserName(firstName, lastName, emailAddresses[0].emailAddress),
       email: emailAddresses[0].emailAddress,
       avatar: imageUrl,
       color: getUserColor(id),

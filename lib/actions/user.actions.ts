@@ -2,7 +2,7 @@
 
 import { cache } from "react"
 import { clerkClient } from "@clerk/nextjs/server"
-import { parseStringify } from "../utils"
+import { parseStringify, getUserName } from "../utils"
 import { liveblocks } from "../liveblocks"
 import { getAuthenticatedEmail } from "../auth"
 
@@ -44,7 +44,11 @@ export const getClerkUsers = cache(
 
       const users = data.map((user) => ({
         id: user.id,
-        name: `${user.firstName} ${user.lastName}`,
+        name: getUserName(
+          user.firstName,
+          user.lastName,
+          user.emailAddresses[0].emailAddress
+        ),
         email: user.emailAddresses[0].emailAddress,
         avatar: user.imageUrl,
       }))

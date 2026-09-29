@@ -24,6 +24,18 @@ export const getAccessType = (userType: UserType) => {
 export const getUserType = (access?: readonly string[]): UserType =>
   access?.includes("room:write") ? "editor" : "viewer"
 
+// Clerk leaves `lastName` (and sometimes `firstName`) null, so a template
+// literal would render "Lili null". Falls back to the email, then a placeholder.
+export const getUserName = (
+  firstName?: string | null,
+  lastName?: string | null,
+  email?: string | null
+): string => {
+  const fullName = [firstName, lastName].filter(Boolean).join(" ").trim()
+
+  return fullName || email || "Anonymous user"
+}
+
 export const dateConverter = (timestamp: string): string => {
   const timestampNum = Math.round(new Date(timestamp).getTime() / 1000)
   const date: Date = new Date(timestampNum * 1000)
