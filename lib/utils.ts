@@ -21,6 +21,9 @@ export const getAccessType = (userType: UserType) => {
   }
 }
 
+export const getUserType = (access?: readonly string[]): UserType =>
+  access?.includes("room:write") ? "editor" : "viewer"
+
 export const dateConverter = (timestamp: string): string => {
   const timestampNum = Math.round(new Date(timestamp).getTime() / 1000)
   const date: Date = new Date(timestampNum * 1000)

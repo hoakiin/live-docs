@@ -4,7 +4,8 @@ import { nanoid } from "@liveblocks/client"
 import { revalidatePath } from "next/cache"
 import { currentUser } from "@clerk/nextjs/server"
 import { liveblocks } from "../liveblocks"
-import { getAccessType, parseStringify } from "../utils"
+import { getAccessType, getUserType, parseStringify } from "../utils"
+import { getAuthenticatedEmail } from "../auth"
 import { redirect } from "next/navigation"
 
 export const createDocument = async ({
@@ -72,6 +73,13 @@ export const getDocuments = async (email: string) => {
 
 export const updateDocument = async (roomId: string, title: string) => {
   try {
+    const email = await getAuthenticatedEmail()
+    const room = await liveblocks.getRoom(roomId)
+
+    if (!room.usersAccesses[email]?.includes("room:write")) {
+      throw new Error("You do not have edit access to this document")
+    }
+
     const updatedRoom = await liveblocks.updateRoom(roomId, {
       metadata: {
         title,
@@ -112,6 +120,12 @@ export const updateDocumentAccess = async ({
       usersAccesses,
     })
 
+    await liveblocks.broadcastEvent(roomId, {
+      type: "ACCESS_CHANGED",
+      userId: email,
+      userType,
+    })
+
     if (room) {
       const notificationId = nanoid()
 
@@ -140,10 +154,8 @@ export const updateDocumentAccess = async ({
 export const removeCollaborator = async ({
   roomId,
   email,
-}: {
-  roomId: string
-  email: string
-}) => {
+  updatedBy,
+}: RemoveCollaboratorParams) => {
   try {
     const clerkUser = await currentUser()
     if (!clerkUser) {
@@ -166,6 +178,24 @@ export const removeCollaborator = async ({
       },
     })
 
+    await liveblocks.broadcastEvent(roomId, {
+      type: "ACCESS_REVOKED",
+      userId: email,
+    })
+
+    await liveblocks.triggerInboxNotification({
+      userId: email,
+      kind: "$documentAccess",
+      subjectId: nanoid(),
+      activityData: {
+        userType: "removed",
+        title: `Access to "${room.metadata.title}" was removed by ${updatedBy.name}`,
+        updatedBy: updatedBy.name,
+        avatar: updatedBy.avatar,
+        email: updatedBy.email,
+      },
+    })
+
     revalidatePath(`/documents/${roomId}`)
     return parseStringify(updatedRoom)
   } catch (error) {
@@ -173,8 +203,27 @@ export const removeCollaborator = async ({
   }
 }
 
+export const getRoomAccess = async (roomId: string) => {
+  const email = await getAuthenticatedEmail()
+  const room = await liveblocks.getRoom(roomId)
+  const access = room.usersAccesses[email]
+
+  if (!access) {
+    return null
+  }
+
+  return { userType: getUserType(access) }
+}
+
 export const deleteDocument = async (roomId: string) => {
   try {
+    const email = await getAuthenticatedEmail()
+    const room = await liveblocks.getRoom(roomId)
+
+    if (room.metadata.email !== email) {
+      throw new Error("Only the document owner can delete this document")
+    }
+
     await liveblocks.deleteRoom(roomId)
     revalidatePath("/")
     redirect("/")

@@ -72,16 +72,29 @@ const FloatingThreadsBehavior = ({
   return null
 }
 
+function EditablePlugin({ editable }: { editable: boolean }) {
+  const [editor] = useLexicalComposerContext()
+
+  useEffect(() => {
+    editor.setEditable(editable)
+  }, [editor, editable])
+
+  return null
+}
+
 export function Editor({
   roomId,
   currentUserType,
+  isOwner,
 }: {
   roomId: string
   currentUserType: UserType
+  isOwner: boolean
 }) {
   const isEditorReady = useIsEditorReady()
   const { threads } = useThreads()
   const [hasInteracted, setHasInteracted] = useState(false)
+  const editable = currentUserType === "editor"
 
   const initialConfig = liveblocksConfig({
     namespace: "Editor",
@@ -91,16 +104,17 @@ export function Editor({
       throw error
     },
     theme: Theme,
-    editable: currentUserType === "editor",
+    editable,
   })
 
   return (
     <LexicalComposer initialConfig={initialConfig}>
+      <EditablePlugin editable={editable} />
       <FloatingThreadsBehavior onInteracted={() => setHasInteracted(true)} />
       <div className="editor-container size-full">
         <div className="toolbar-wrapper flex min-w-full items-center justify-between">
           <ToolbarPlugin />
-          {currentUserType === "editor" && <DeleteModal roomId={roomId} />}
+          {editable && isOwner && <DeleteModal roomId={roomId} />}
         </div>
 
         <div className="flex custom-scrollbar h-[calc(100vh-140px)] flex-col items-center justify-start gap-5 overflow-auto px-5 pt-5 lg:flex-row lg:items-start lg:justify-center xl:gap-10 xl:pt-10">
@@ -115,7 +129,7 @@ export function Editor({
                 placeholder={<Placeholder />}
                 ErrorBoundary={LexicalErrorBoundary}
               />
-              {currentUserType === "editor" && <FloatingToolbarPlugin />}
+              {editable && <FloatingToolbarPlugin />}
               <HistoryPlugin />
               <AutoFocusPlugin />
             </div>

@@ -28,7 +28,9 @@ declare global {
     };
 
     // Custom events, for useBroadcastEvent, useEventListener
-    RoomEvent: {};
+    RoomEvent:
+      | { type: "ACCESS_REVOKED"; userId: string }
+      | { type: "ACCESS_CHANGED"; userId: string; userType: UserType };
     // Example has two events, using a union
     // | { type: "PLAY" }
     // | { type: "REACTION"; emoji: "🔥" };

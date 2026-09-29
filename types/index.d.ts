@@ -42,6 +42,12 @@ declare type ShareDocumentParams = {
   updatedBy: User
 }
 
+declare type RemoveCollaboratorParams = {
+  roomId: string
+  email: string
+  updatedBy: User
+}
+
 declare type UserTypeSelectorParams = {
   userType: string
   setUserType: React.Dispatch<React.SetStateAction<UserType>>
@@ -71,6 +77,7 @@ declare type CollaborativeRoomProps = {
   roomId: string
   roomMetadata: RoomMetadata
   users: User[]
+  isOwner: boolean
   currentUserType: UserType
 }
 

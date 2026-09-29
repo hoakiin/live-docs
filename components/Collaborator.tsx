@@ -33,7 +33,7 @@ const Collaborator = ({
   const removeCollaboratorHandler = async (email: string) => {
     setLoading(true)
 
-    await removeCollaborator({ email, roomId })
+    await removeCollaborator({ email, roomId, updatedBy: user })
 
     setLoading(false)
   }

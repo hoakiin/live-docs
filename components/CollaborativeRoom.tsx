@@ -5,21 +5,42 @@ import { Editor } from "@/components/editor/Editor"
 import Header from "@/components/Header"
 import { Show, SignInButton, SignUpButton, UserButton } from "@clerk/nextjs"
 import ActiveCollaborators from "./ActiveCollaborators"
-import { useEffect, useRef, useState } from "react"
+import { useCallback, useEffect, useRef, useState } from "react"
 import Image from "next/image"
 import { updateDocument } from "@/lib/actions/room.actions"
+import { useRouter } from "next/navigation"
 import Loader from "./Loader"
+import RoomAccessWatcher from "./RoomAccessWatcher"
 import ShareModal from "./ShareModal"
 
 const CollaborativeRoom = ({
   roomId,
   roomMetadata,
   users,
-  currentUserType,
+  isOwner,
+  currentUserType: initialUserType,
 }: CollaborativeRoomProps) => {
+  const router = useRouter()
+  const [currentUserType, setCurrentUserType] = useState<UserType | null>(
+    initialUserType
+  )
   const [documentTitle, setDocumentTitle] = useState(roomMetadata.title)
   const [editing, setEditing] = useState(false)
   const [loading, setLoading] = useState(false)
+
+  const isEditor = currentUserType === "editor"
+  const hasAccess = currentUserType !== null
+
+  const handleAccessChange = useCallback(
+    (userType: UserType | null) => {
+      setCurrentUserType(userType)
+
+      if (!userType) {
+        router.replace("/")
+      }
+    },
+    [router]
+  )
 
   const containerRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
@@ -75,13 +96,17 @@ const CollaborativeRoom = ({
   return (
     <RoomProvider id={roomId}>
       <ClientSideSuspense fallback={<Loader />}>
+        <RoomAccessWatcher
+          roomId={roomId}
+          onAccessChange={handleAccessChange}
+        />
         <div className="collaborative-room">
           <Header>
             <div
               ref={containerRef}
               className="flex w-fit items-center justify-center gap-2"
             >
-              {editing && !loading ? (
+              {isEditor && editing && !loading ? (
                 <input
                   type="text"
                   value={documentTitle}
@@ -101,7 +126,7 @@ const CollaborativeRoom = ({
                 </>
               )}
 
-              {currentUserType === "editor" && !loading && (
+              {isEditor && !loading && (
                 <Image
                   src="/assets/icons/edit.svg"
                   alt="edit"
@@ -114,9 +139,11 @@ const CollaborativeRoom = ({
                 />
               )}
 
-              {currentUserType !== "editor" && !editing && (
+              {!isEditor && hasAccess && !editing && (
                 <p className="view-only-tag">View only</p>
               )}
+
+              {!hasAccess && <p className="view-only-tag">Access revoked</p>}
 
               {loading && <p className="text-sm text-gray-400">saving...</p>}
             </div>
@@ -146,7 +173,11 @@ const CollaborativeRoom = ({
               </Show>
             </div>
           </Header>
-          <Editor roomId={roomId} currentUserType={currentUserType} />
+          <Editor
+            roomId={roomId}
+            currentUserType={isEditor ? "editor" : "viewer"}
+            isOwner={isOwner}
+          />
         </div>
       </ClientSideSuspense>
     </RoomProvider>
