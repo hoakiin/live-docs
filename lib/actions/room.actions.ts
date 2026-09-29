@@ -226,8 +226,12 @@ export const deleteDocument = async (roomId: string) => {
 
     await liveblocks.deleteRoom(roomId)
     revalidatePath("/")
-    redirect("/")
   } catch (error) {
     console.log(`Error happened while deleting a room: ${error}`)
+    return
   }
+
+  // Must stay outside the try/catch: `redirect` works by throwing NEXT_REDIRECT,
+  // which the catch above would swallow and leave the user on a deleted room.
+  redirect("/")
 }
