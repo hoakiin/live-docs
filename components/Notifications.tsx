@@ -12,21 +12,36 @@ import {
 } from "@liveblocks/react-ui"
 import {
   useInboxNotifications,
-  useUnreadInboxNotificationsCount,
+  useMarkAllInboxNotificationsAsRead,
 } from "@liveblocks/react/suspense"
 import Image from "next/image"
 import { ReactNode } from "react"
 
 const Notifications = () => {
   const { inboxNotifications } = useInboxNotifications()
-  const { count } = useUnreadInboxNotificationsCount()
+  const markAllAsRead = useMarkAllInboxNotificationsAsRead()
 
   const unreadNotifications = inboxNotifications.filter(
     (notification) => !notification.readAt
   )
 
+  // `useUnreadInboxNotificationsCount` reads from a separate cached resource that
+  // marking notifications as read doesn't invalidate, so the bell would keep
+  // showing a dot for a list that is already empty. Derive it from the same array
+  // the list renders from, so the indicator can never disagree with the list.
+  const unreadCount = unreadNotifications.length
+
+  // The list only renders unread notifications, so they have to be marked as
+  // read once the panel is closed, otherwise they stay in the inbox forever
+  // and reappear on every reload.
+  const handleOpenChange = (open: boolean) => {
+    if (!open && unreadCount > 0) {
+      markAllAsRead()
+    }
+  }
+
   return (
-    <Popover>
+    <Popover onOpenChange={handleOpenChange}>
       <PopoverTrigger className="relative flex size-10 items-center justify-center rounded-lg">
         <Image
           src="/assets/icons/bell.svg"
@@ -34,7 +49,7 @@ const Notifications = () => {
           width={24}
           height={24}
         />
-        {count > 0 && (
+        {unreadCount > 0 && (
           <div className="absolute top-2 right-2 z-20 size-2 rounded-full bg-blue-500" />
         )}
       </PopoverTrigger>
@@ -59,7 +74,11 @@ const Notifications = () => {
                   key={notification.id}
                   inboxNotification={notification}
                   className="bg-dark-200 text-white"
-                  href={`/documents/${notification.roomId}`}
+                  href={
+                    notification.roomId
+                      ? `/documents/${notification.roomId}`
+                      : undefined
+                  }
                   showActions={false}
                   kinds={{
                     thread: (props) => (
